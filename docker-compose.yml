@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  urls-storage:
+    image: cassandra:latest
+    container_name: urls-storage-db
+    command: [ -f ]
+    ports:
+      - '9042:9042'
+    healthcheck:
+      test: ["CMD", "cqlsh", "--execute", "DESCRIBE KEYSPACES;"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  app:
+    build: .
+    container_name: url-shortener-service
+    ports:
+      - '8083:8083'
+    environment:
+      CASSANDRA_KEYSPACE: links
+    depends_on:
+      urls-storage:
+        condition: service_healthy
