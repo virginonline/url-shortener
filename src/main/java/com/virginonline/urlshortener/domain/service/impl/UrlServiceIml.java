@@ -34,7 +34,7 @@ public class UrlServiceIml implements UrlService {
         Token.builder()
             .id(id)
             .source(url)
-            .code(id.toString().substring(0, 8))
+            .code(id.toString().substring(0, 8)) // tmp code
             .createdDate(Instant.now())
             .isActive(true)
             .build();

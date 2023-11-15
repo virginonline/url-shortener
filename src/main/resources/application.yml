@@ -1,16 +1,16 @@
 server:
   port: 8083
+
 spring:
   application:
     name: url-shortener-service
   cassandra:
     port: 9042
-    local-datacenter: datacenter1
-    keyspace-name: links
-    schema-action: create-if-not-exists
+    keyspace-name: ${CASSANDRA_KEYSPACE}
     connection:
       connect-timeout: 30s
       init-query-timeout: 10s
     request:
       timeout: 10s
-    contact-points: urls-storage-db
+    contact-points: ${CASSANDRA_CONTACT_POINTS}
+    local-datacenter: ${CASSANDRA_DATACENTER}
