@@ -1,7 +1,7 @@
-package com.virginonline.urlshortener.rest.api;
+package com.virginonline.urlshortener.infrastructure.api;
 
-import com.virginonline.urlshortener.domain.model.Token;
-import com.virginonline.urlshortener.domain.service.UrlService;
+import com.virginonline.urlshortener.domain.model.LinkInfo;
+import com.virginonline.urlshortener.infrastructure.service.UrlService;
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class UrlController {
   private final UrlService urlService;
 
   @GetMapping("/{code}")
-  public Mono<ResponseEntity<Token>> code(@PathVariable String code) {
+  public Mono<ResponseEntity<LinkInfo>> code(@PathVariable String code) {
     return urlService
         .findByCode(code)
         .map(ResponseEntity::ok)
@@ -28,7 +28,7 @@ public class UrlController {
   }
 
   @PostMapping("/create")
-  public Mono<ResponseEntity<Token>> createLink(@RequestParam String source) {
+  public Mono<ResponseEntity<LinkInfo>> createLink(@RequestParam String source) {
     return urlService
         .saveUrl(source)
         .map(ResponseEntity::ok)
@@ -36,7 +36,7 @@ public class UrlController {
   }
 
   @GetMapping
-  public Collection<Token> fetchAllTokens() {
+  public Collection<LinkInfo> fetchAllTokens() {
     return urlService.getAll();
   }
 }

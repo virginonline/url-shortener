@@ -1,20 +1,22 @@
 package com.virginonline.urlshortener.domain.model;
 
-import java.time.Instant;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 @Data
 @Builder
-@Table("tokens")
+@Table("link_info")
 @ToString
-public class Token {
+public class LinkInfo {
   @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
   private UUID id;
 
@@ -22,6 +24,7 @@ public class Token {
 
   private String code;
 
-  @CreatedDate private Instant createdDate;
-  private Boolean isActive;
+  @Column("created_date")
+  @JsonProperty("created_date")
+  private LocalDateTime createdDate;
 }

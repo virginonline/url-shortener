@@ -5,3 +5,7 @@
 * Spring boot
 * Cassandra
 * Docker
+* Redis
+
+## todo
+* kgs service

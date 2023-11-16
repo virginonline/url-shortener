@@ -7,8 +7,6 @@ services:
     command: [ -f ]
     environment:
       CASSANDRA_CLUSTER_NAME: app
-    networks:
-      - url-network
     ports:
       - "9042:9042"
       - "9160:9160"
@@ -23,21 +21,14 @@ services:
     ulimits:
       memlock: -1
   app:
-    image: virginonline/url-shortener:latest
     build:
       context: .
       dockerfile: Dockerfile
     container_name: url-shortener-service
     ports:
       - '8083:8083'
-    networks:
-      - url-network
-    environment:
-      CASSANDRA_DATACENTER: datacenter1
-      CASSANDRA_KEYSPACE: links
-      CASSANDRA_CONTACT_POINTS: "urls-storage:9042"
-      CASSANDRA_USER: cassandra
-      CASSANDRA_PASSWORD: cassandra
+    env_file:
+      - .env
     depends_on:
       urls-storage:
         condition: service_healthy
@@ -53,11 +44,12 @@ services:
       CASSANDRA_PORT: 9042
       CASSANDRA_USER: cassandra
       CASSANDRA_PASSWORD: cassandra
-    networks:
-      - url-network
+    restart: on-failure
+    depends_on:
+      urls-storage:
+        condition: service_healthy
 
-networks:
-  url-network:
+
 
 volumes:
   cassandra_data:

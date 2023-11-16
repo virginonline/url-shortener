@@ -2,6 +2,10 @@ server:
   port: 8083
 
 spring:
+  config:
+    import: optional:file:.env[.properties]
+  main:
+    banner-mode: off
   application:
     name: url-shortener-service
   cassandra:
@@ -14,3 +18,7 @@ spring:
       timeout: 10s
     contact-points: ${CASSANDRA_CONTACT_POINTS}
     local-datacenter: ${CASSANDRA_DATACENTER}
+    schema-action: create_if_not_exists
+
+app:
+  url-length: 8
