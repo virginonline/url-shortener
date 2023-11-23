@@ -14,8 +14,7 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 @Testcontainers
-class UrlServiceTest {
-
+class UrlServiceImlTest {
   @ServiceConnection @Container
   static CassandraContainer<?> cassandraContainer =
       new CassandraContainer<>("cassandra:5.0").withInitScript("scripts/init-keyspace.cql");
@@ -29,7 +28,7 @@ class UrlServiceTest {
   }
 
   @Test
-  void testSaveUrlAndFindByCode() {
+  void findByCode() {
     String url = "https://example.com";
     var result = urlService.saveUrl(url);
     StepVerifier.create(result).expectNextCount(1).expectComplete().verify();
@@ -41,10 +40,21 @@ class UrlServiceTest {
   }
 
   @Test
-  void testGetAll() {
+  void saveUrl() {
+    String url = "https://example.com";
+    var result = urlService.saveUrl(url);
+    StepVerifier.create(result).expectNextCount(1).expectComplete().verify();
+    String savedCode = result.block().getCode();
+
+    var foundLinkMono = urlService.findByCode(savedCode);
+
+    StepVerifier.create(foundLinkMono).expectNextCount(1).expectComplete().verify();
+  }
+
+  @Test
+  void getAll() {
     var links = urlService.getAll();
 
     StepVerifier.create(links).expectNextCount(1).thenCancel().verify();
   }
-
 }
