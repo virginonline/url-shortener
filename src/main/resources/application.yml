@@ -19,6 +19,12 @@ spring:
     contact-points: ${CASSANDRA_CONTACT_POINTS}
     local-datacenter: ${CASSANDRA_DATACENTER}
     schema-action: create_if_not_exists
-
+  data:
+    redis:
+      port: 6379
+      client-type: lettuce
+  cache:
+    type: redis
+    cache-names: redis-cache
 app:
   url-length: 8

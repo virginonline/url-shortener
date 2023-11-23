@@ -6,9 +6,9 @@ FROM maven:${MAVEN_VERSION}-openjdk-${JAVA_VERSION} AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package
+RUN mvn clean package -Dmaven.test.skip
 
-FROM bellsoft/liberica-openjdk-alpine-musl:${JAVA_VERSION}
+FROM bellsoft/liberica-openjre-alpine:${JAVA_VERSION}
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8083

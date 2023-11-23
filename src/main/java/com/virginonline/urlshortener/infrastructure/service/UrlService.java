@@ -1,8 +1,7 @@
 package com.virginonline.urlshortener.infrastructure.service;
 
 import com.virginonline.urlshortener.domain.model.LinkInfo;
-
-import java.util.Collection;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UrlService {
@@ -10,5 +9,5 @@ public interface UrlService {
 
   Mono<LinkInfo> saveUrl(String url);
 
-  Collection<LinkInfo> getAll();
+  Flux<LinkInfo> getAll();
 }

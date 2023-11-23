@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   urls-storage:
-    image: cassandra:latest
+    image: cassandra:5.0
     container_name: urls-storage-db
     command: [ -f ]
     environment:
@@ -20,10 +20,20 @@ services:
       - cassandra_data:/var/lib/cassandra
     ulimits:
       memlock: -1
+
+  redis:
+    container_name: redis
+    image: redis:7.2-rc-alpine
+    ports:
+      - '6379:6379'
+    environment:
+      ALLOW_EMPTY_PASSWORD: yes
+    volumes:
+      - cache:/data
+
   app:
     build:
       context: .
-      dockerfile: Dockerfile
     container_name: url-shortener-service
     ports:
       - '8083:8083'
@@ -32,7 +42,8 @@ services:
     depends_on:
       urls-storage:
         condition: service_healthy
-
+      redis:
+        condition: service_started
   cassandra-ui:
     image: ipushc/cassandra-web
     container_name: cassandra-webui
@@ -46,6 +57,8 @@ services:
       CASSANDRA_PASSWORD: cassandra
     restart: on-failure
     depends_on:
+      redis:
+        condition: service_started
       urls-storage:
         condition: service_healthy
 
@@ -53,4 +66,6 @@ services:
 
 volumes:
   cassandra_data:
+    driver: local
+  cache:
     driver: local

@@ -5,14 +5,13 @@ import com.virginonline.urlshortener.domain.model.LinkInfo;
 import com.virginonline.urlshortener.domain.repository.UrlRepository;
 import com.virginonline.urlshortener.infrastructure.service.UrlService;
 import com.virginonline.urlshortener.util.KeyGenerator;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -24,6 +23,7 @@ public class UrlServiceIml implements UrlService {
   private final KeyGenerator keyGenerator;
 
   @Override
+  @Cacheable(key = "{#code}", value = "UrlService::findByCode")
   public Mono<LinkInfo> findByCode(String code) {
     log.info("searching link by {}", code);
     return urlRepository.findByCode(code);
@@ -50,8 +50,9 @@ public class UrlServiceIml implements UrlService {
   }
 
   @Override
-  public Collection<LinkInfo> getAll() {
+  public Flux<LinkInfo> getAll() {
     log.info("Fetching all urls");
-    return urlRepository.findAll().toStream().collect(Collectors.toList());
+
+    return urlRepository.findAll();
   }
 }

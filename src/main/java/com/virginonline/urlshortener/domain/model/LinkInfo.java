@@ -1,7 +1,6 @@
 package com.virginonline.urlshortener.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
