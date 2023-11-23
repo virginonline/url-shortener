@@ -2,10 +2,15 @@ package com.virginonline.urlshortener.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.virginonline.urlshortener.domain.model.LinkInfo;
+import com.virginonline.urlshortener.domain.repository.UrlRepository;
 import com.virginonline.urlshortener.infrastructure.service.UrlService;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -14,13 +19,13 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 @Testcontainers
-class UrlServiceTest {
-
+class UrlServiceImlTest {
   @ServiceConnection @Container
   static CassandraContainer<?> cassandraContainer =
       new CassandraContainer<>("cassandra:5.0").withInitScript("scripts/init-keyspace.cql");
 
-  @Autowired private UrlService urlService;
+  @Autowired
+  private UrlService urlService;
 
   @Test
   void connectionEstablished() {
@@ -29,7 +34,7 @@ class UrlServiceTest {
   }
 
   @Test
-  void testSaveUrlAndFindByCode() {
+  void findByCode() {
     String url = "https://example.com";
     var result = urlService.saveUrl(url);
     StepVerifier.create(result).expectNextCount(1).expectComplete().verify();
@@ -41,10 +46,28 @@ class UrlServiceTest {
   }
 
   @Test
-  void testGetAll() {
-    var links = urlService.getAll();
+  void saveUrl() {
+    String url = "https://example.com";
+    var result = urlService.saveUrl(url);
+    StepVerifier.create(result).expectNextCount(1).expectComplete().verify();
+    String savedCode = result.block().getCode();
 
-    StepVerifier.create(links).expectNextCount(1).thenCancel().verify();
+    var foundLinkMono = urlService.findByCode(savedCode);
+
+    StepVerifier.create(foundLinkMono).expectNextCount(1).expectComplete().verify();
   }
+
+  @Test
+  void getAll() {
+    String url = "https://example.com";
+    var result = urlService.saveUrl(url);
+
+    StepVerifier.create(result).expectNextCount(1).expectComplete().verify();
+
+    var links = urlService.getAll();
+    StepVerifier.create(links).expectNextCount(1).expectComplete().verify();
+  }
+
+
 
 }
