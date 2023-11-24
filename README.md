@@ -1,4 +1,7 @@
 # url-shortener
+[![codecov](https://codecov.io/gh/virginonline/url-shortener/graph/badge.svg?token=69YAIOZ8ML)](https://codecov.io/gh/virginonline/url-shortener)
+[![Build](https://github.com/virginonline/url-shortener/actions/workflows/build.yaml/badge.svg)](https://github.com/virginonline/url-shortener/actions/workflows/build.yaml)
+[![Docker Image CI](https://github.com/virginonline/url-shortener/actions/workflows/deploy.yml/badge.svg)](https://github.com/virginonline/url-shortener/actions/workflows/deploy.yml)
 
 This application helps you short links.
 

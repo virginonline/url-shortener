@@ -30,7 +30,7 @@ public class UrlController {
   }
 
   @PostMapping("/create")
-  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseStatus(HttpStatus.OK)
   public Mono<ResponseEntity<LinkInfo>> createLink(@RequestParam String source) {
     return urlService
         .saveUrl(source)
