@@ -5,8 +5,7 @@ on:
     branches:
       - '*'
   push:
-    branches:
-      - 'master'
+    branches: [ master ]
 
 jobs:
   build:
@@ -20,9 +19,13 @@ jobs:
           java-version: '17'
           distribution: 'liberica'
 
-      #       build project and run all tests & checks
-      - name: Maven Verify
-        run: mvn -B clean verify
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('**/pom.xml')}}
+          restore-keys: |
+            maven-
+      - run: mvn clean install
 
       #       Upload code coverage report to Codecov
       - name: Test Coverage
