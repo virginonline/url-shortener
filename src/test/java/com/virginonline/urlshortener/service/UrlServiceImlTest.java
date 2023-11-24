@@ -2,15 +2,10 @@ package com.virginonline.urlshortener.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.virginonline.urlshortener.domain.model.LinkInfo;
-import com.virginonline.urlshortener.domain.repository.UrlRepository;
 import com.virginonline.urlshortener.infrastructure.service.UrlService;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.junit.jupiter.Container;
