@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,11 +22,14 @@ public class UrlServiceIml implements UrlService {
   private final UrlRepository urlRepository;
   private final KeyGenerator keyGenerator;
 
+  private final ReactiveRedisTemplate<String, LinkInfo> redisTemplate;
+
   @Override
-  @Cacheable(key = "{#code}", value = "UrlService::findByCode")
   public Mono<LinkInfo> findByCode(String code) {
-    log.info("searching link by {}", code);
-    return urlRepository.findByCode(code);
+    return redisTemplate
+        .opsForValue()
+        .get(code).switchIfEmpty(Mono.defer(() -> urlRepository.findByCode(code)
+            .flatMap(linkInfo -> redisTemplate.opsForValue().set(code, linkInfo).thenReturn(linkInfo))));
   }
 
   @Override
@@ -52,7 +55,6 @@ public class UrlServiceIml implements UrlService {
   @Override
   public Flux<LinkInfo> getAll() {
     log.info("Fetching all urls");
-
     return urlRepository.findAll();
   }
 }

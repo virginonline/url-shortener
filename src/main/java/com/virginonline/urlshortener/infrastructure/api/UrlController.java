@@ -30,11 +30,11 @@ public class UrlController {
   }
 
   @PostMapping("/create")
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(HttpStatus.CREATED)
   public Mono<ResponseEntity<LinkInfo>> createLink(@RequestParam String source) {
     return urlService
         .saveUrl(source)
-        .map(ResponseEntity::ok)
+        .map(link -> ResponseEntity.status(HttpStatus.CREATED).body(link))
         .defaultIfEmpty(ResponseEntity.notFound().build());
   }
 
