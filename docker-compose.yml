@@ -45,6 +45,23 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+  grafana:
+    image: grafana/grafana:10.2.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+
   cassandra-ui:
     image: ipushc/cassandra-web
     container_name: cassandra-webui
