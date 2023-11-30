@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * The `UrlController` class handles URL-related operations.
+ */
 @RestController
 @RequestMapping("api/v1/")
 @RequiredArgsConstructor
@@ -22,7 +25,10 @@ public class UrlController {
   private final UrlService urlService;
 
   @GetMapping("/{code}")
-  public Mono<ResponseEntity<LinkInfo>> code(@PathVariable String code) {
+  public Mono<ResponseEntity<LinkInfo>> getLinkByCode(@PathVariable String code) {
+    if (code == null || code.isEmpty()) {
+      return Mono.just(ResponseEntity.badRequest().build());
+    }
     return urlService
         .findByCode(code)
         .map(ResponseEntity::ok)
@@ -31,15 +37,15 @@ public class UrlController {
 
   @PostMapping("/create")
   @ResponseStatus(HttpStatus.CREATED)
-  public Mono<ResponseEntity<LinkInfo>> createLink(@RequestParam String source) {
+  public Mono<ResponseEntity<LinkInfo>> createLink(@RequestParam String sourceUrl) {
     return urlService
-        .saveUrl(source)
+        .saveUrl(sourceUrl)
         .map(link -> ResponseEntity.status(HttpStatus.CREATED).body(link))
         .defaultIfEmpty(ResponseEntity.notFound().build());
   }
 
   @GetMapping
-  public Flux<LinkInfo> fetchAllTokens() {
+  public Flux<LinkInfo> getAllLinks() {
     return urlService.getAll();
   }
 }

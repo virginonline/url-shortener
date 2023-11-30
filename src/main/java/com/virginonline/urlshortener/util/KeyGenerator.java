@@ -2,6 +2,7 @@ package com.virginonline.urlshortener.util;
 
 import com.virginonline.urlshortener.domain.repository.UrlRepository;
 import java.util.Random;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,13 +25,14 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Getter
 public class KeyGenerator {
 
   private final UrlRepository urlRepository;
   private final Random random = new Random();
 
   @Value("${app.url-length}")
-  private int linkLength;
+  private int codeLength;
 
   /**
    * Generates a unique short link asynchronously.
@@ -41,18 +43,18 @@ public class KeyGenerator {
     log.info("Generating short links...");
     return Mono.defer(
         () -> {
-          char[] result = new char[linkLength];
+          char[] generatedCode = new char[codeLength];
 
-          for (int i = 0; i < linkLength; i++) {
+          for (int i = 0; i < codeLength; i++) {
             int randomIndex = random.nextInt(CharactersDictionary.CHARACTERS.length - 1);
-            result[i] = CharactersDictionary.CHARACTERS[randomIndex];
+            generatedCode[i] = CharactersDictionary.CHARACTERS[randomIndex];
           }
 
-          String code = new String(result);
+          String code = new String(generatedCode);
 
           return urlRepository
               .existsByCode(code)
-              .flatMap(exists -> exists ? generateLink() : Mono.just(code));
+              .flatMap(codeExists -> codeExists ? generateLink() : Mono.just(code));
         });
   }
 }
